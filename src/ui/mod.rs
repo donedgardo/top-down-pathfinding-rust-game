@@ -18,7 +18,11 @@ pub fn setup_gold_resource_ui(mut commands: Commands) {
         GoldResourceLabel,
         TextBundle::from_section(
             "0".to_string(),
-            TextStyle::default(),
+            TextStyle {
+                color:  Color::ALICE_BLUE,
+                font_size: 14.,
+                ..default()
+            },
         ))
     );
 }
