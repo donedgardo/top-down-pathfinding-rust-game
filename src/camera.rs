@@ -21,8 +21,7 @@ pub struct MainCamera;
 mod camera_test {
     use bevy::core_pipeline::core_2d::Core2dPlugin;
     use bevy::prelude::*;
-    use crate::camera::MainCamera;
-    use crate::camera::MyCameraPlugin;
+    use crate::camera::{MainCamera, MyCameraPlugin};
 
     #[test]
     fn it_spawns_main_camera() {

@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use crate::camera::MyCameraPlugin;
 use crate::game_state::AppState;
 use crate::gold_resource::ResourcesPlugin;
 use crate::ui::UIPlugin;
@@ -13,6 +14,7 @@ fn main() {
     app.add_state::<AppState>();
     app.add_plugins((
         DefaultPlugins,
+        MyCameraPlugin,
         UIPlugin,
         ResourcesPlugin,
     ));
