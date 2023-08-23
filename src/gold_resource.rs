@@ -1,4 +1,6 @@
-#[derive(Default)]
+use bevy::prelude::{Commands, Component};
+
+#[derive(Default, Component)]
 pub struct GoldResource(u32);
 
 impl GoldResource {
@@ -21,11 +23,18 @@ impl GoldResource {
     }
 }
 
+fn setup_resource(mut commands: Commands) {
+    commands.spawn(GoldResource::new(50));
+}
+
 #[derive(Debug, Clone, PartialEq)]
 pub struct NotEnoughResourceError;
 
 mod resources_ui_test {
-    use crate::gold_resource::{GoldResource, NotEnoughResourceError};
+    use bevy::core_pipeline::core_2d::Core2dPlugin;
+    use bevy::prelude::{App, OnEnter};
+    use crate::game_state::AppState;
+    use crate::gold_resource::{GoldResource, NotEnoughResourceError, setup_resource};
 
     #[test]
     fn it_adds_gold_resource() {
@@ -55,5 +64,18 @@ mod resources_ui_test {
         let mut gold_resource = GoldResource::new(4);
         let _ = gold_resource.remove(3);
         assert_eq!(gold_resource.balance(), 1);
+    }
+
+
+    #[test]
+    fn on_game_start_it_sets_gold_resource_to_50() {
+        let mut app = App::new();
+        app
+            .add_state::<AppState>()
+            .add_plugins(Core2dPlugin)
+            .add_systems(OnEnter(AppState::InGame), setup_resource);
+        app.update();
+        let gold_resource = app.world.query::<&GoldResource>().single(&app.world);
+        assert_eq!(gold_resource.balance(), 50);
     }
 }

@@ -1,4 +1,6 @@
-use bevy::prelude::{Commands, Component, TextBundle, TextStyle};
+use bevy::app::{App, Plugin};
+use bevy::prelude::{Commands, Component, OnEnter, TextBundle, TextStyle};
+use crate::game_state::AppState;
 
 pub fn setup_gold_resource_ui(mut commands: Commands) {
     commands.spawn((
@@ -10,6 +12,16 @@ pub fn setup_gold_resource_ui(mut commands: Commands) {
     );
 }
 
+
+
+pub struct UIPlugin;
+
+impl Plugin for UIPlugin {
+    fn build(&self, app: &mut App) {
+        app.add_systems(OnEnter(AppState::InGame), setup_gold_resource_ui);
+    }
+}
+
 #[derive(Component)]
 pub struct GoldResourceLabel;
 
@@ -18,7 +30,7 @@ mod resources_ui_test {
     use bevy::core_pipeline::core_2d::Core2dPlugin;
     use bevy::prelude::*;
     use crate::game_state::AppState;
-    use crate::ui::{GoldResourceLabel, setup_gold_resource_ui};
+    use crate::ui::{GoldResourceLabel, UIPlugin};
 
     #[test]
     fn it_shows_gold_resources_label() {
@@ -37,8 +49,7 @@ mod resources_ui_test {
 
     fn setup() -> App {
         let mut app = App::new();
-        app.add_plugins(Core2dPlugin);
-        app.add_systems(OnEnter(AppState::InGame), setup_gold_resource_ui);
+        app.add_plugins((Core2dPlugin, UIPlugin));
         app.add_state::<AppState>();
         app.update();
         app
