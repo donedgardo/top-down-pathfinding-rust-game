@@ -11,7 +11,6 @@ impl Plugin for MyCameraPlugin {
 
 fn spawn_main_camera(mut commands: Commands) {
     commands.spawn((MainCamera, Camera2dBundle::default()));
-
 }
 
 #[derive(Component)]
