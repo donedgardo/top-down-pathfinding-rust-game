@@ -17,7 +17,7 @@ pub struct GoldResourceLabel;
 mod resources_ui_test {
     use bevy::core_pipeline::core_2d::Core2dPlugin;
     use bevy::prelude::*;
-    use crate::AppState;
+    use crate::game_state::AppState;
     use crate::ui::{GoldResourceLabel, setup_gold_resource_ui};
 
     #[test]

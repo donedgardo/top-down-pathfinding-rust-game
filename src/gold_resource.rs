@@ -49,10 +49,11 @@ mod resources_ui_test {
         let result = gold_resource.remove(5);
         assert_eq!(result.unwrap_err(), NotEnoughResourceError);
     }
+
     #[test]
     fn it_removes_correctly_from_balance() {
         let mut gold_resource = GoldResource::new(4);
-        let result = gold_resource.remove(3);
+        let _ = gold_resource.remove(3);
         assert_eq!(gold_resource.balance(), 1);
     }
 }

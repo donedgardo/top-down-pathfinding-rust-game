@@ -2,13 +2,10 @@ use bevy::prelude::*;
 
 mod gold_resource;
 mod ui;
-
-#[derive(States, PartialEq, Eq, Debug, Clone, Hash, Default)]
-enum AppState {
-    #[default]
-    InGame,
-}
+mod game_state;
 
 fn main() {
-    println!("Hello, world!");
+    let mut app = App::new();
+    app.add_plugins(DefaultPlugins);
+    app.run();
 }
