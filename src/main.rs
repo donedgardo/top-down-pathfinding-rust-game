@@ -1,10 +1,19 @@
 use bevy::prelude::*;
 
 struct GoldResource(u32);
+#[derive(Debug, Clone, PartialEq)]
+struct NotEnoughResourceError;
 
 impl GoldResource {
     pub fn gain(&mut self, amount: u32) {
         self.0 += amount;
+    }
+
+    pub(crate) fn remove(&self, amount: u32) -> Result<(), NotEnoughResourceError> {
+        if amount > self.0 {
+            return Err(NotEnoughResourceError);
+        }
+        Ok(())
     }
     pub fn balance(&self) -> u32 {
         self.0
@@ -63,6 +72,20 @@ mod resources_test {
         assert_eq!(gold_resource.balance(), 5);
         gold_resource.gain(6);
         assert_eq!(gold_resource.balance(), 11);
+    }
+
+    #[test]
+    fn it_remains_the_same_when_removing_0() {
+        let mut gold_resource = GoldResource(0);
+        gold_resource.remove(0).unwrap();
+        assert_eq!(gold_resource.balance(), 0);
+    }
+
+    #[test]
+    fn it_errors_if_not_enough_balance_when_removing() {
+        let mut gold_resource = GoldResource(0);
+        let result = gold_resource.remove(5);
+        assert_eq!(result.unwrap_err(), NotEnoughResourceError);
     }
 
     fn setup() -> App {
