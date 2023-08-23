@@ -49,17 +49,17 @@ mod resources_ui_test {
     #[test]
     fn it_shows_gold_resources_label_default_0() {
         let mut app = setup();
-        let text = app.world.query_filtered::<&Text, With<GoldResourceLabel>>()
-            .single(&app.world);
-        assert_eq!(text.sections[0].value, "0");
+        let text = get_resource_label_text_value(&mut app);
+        assert_eq!(*text, "0");
     }
+
+
 
     #[test]
     fn it_updates_label_when_resource_changes() {
         //setup
         let mut app = setup();
         let entity = app.world.spawn(GoldResource::new(0)).id();
-        app.update();
 
         // action
         let mut binding = app.world.entity_mut(entity);
@@ -68,9 +68,13 @@ mod resources_ui_test {
         app.update();
 
         //result
+        assert_eq!(get_resource_label_text_value(&mut app), "50");
+    }
+
+    fn get_resource_label_text_value(app: &mut App) -> &String {
         let text = app.world.query_filtered::<&Text, With<GoldResourceLabel>>()
             .single(&app.world);
-        assert_eq!(text.sections[0].value, "50");
+        &text.sections[0].value
     }
 
     fn setup() -> App {
