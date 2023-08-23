@@ -1,8 +1,18 @@
-use bevy::app::{App, Plugin};
-use bevy::prelude::{Changed, Commands, Component, OnEnter, Query, Text, TextBundle, TextStyle, With};
+use bevy::prelude::*;
 use crate::game_state::AppState;
 use crate::gold_resource::GoldResource;
 
+pub struct UIPlugin;
+
+impl Plugin for UIPlugin {
+    fn build(&self, app: &mut App) {
+        app
+            .add_systems(OnEnter(AppState::InGame), setup_gold_resource_ui)
+            .add_systems(
+                Update,
+                update_gold_resource_label.run_if(in_state(AppState::InGame)));
+    }
+}
 pub fn setup_gold_resource_ui(mut commands: Commands) {
     commands.spawn((
         GoldResourceLabel,
@@ -20,14 +30,6 @@ pub fn update_gold_resource_label(query: Query<&GoldResource, Changed<GoldResour
     }
 }
 
-pub struct UIPlugin;
-
-impl Plugin for UIPlugin {
-    fn build(&self, app: &mut App) {
-        app.add_systems(OnEnter(AppState::InGame), setup_gold_resource_ui);
-    }
-}
-
 #[derive(Component)]
 pub struct GoldResourceLabel;
 
@@ -37,7 +39,7 @@ mod resources_ui_test {
     use bevy::prelude::*;
     use crate::game_state::AppState;
     use crate::gold_resource::GoldResource;
-    use crate::ui::{GoldResourceLabel, UIPlugin, update_gold_resource_label};
+    use crate::ui::{GoldResourceLabel, UIPlugin};
 
     #[test]
     fn it_shows_gold_resources_label() {
@@ -52,7 +54,6 @@ mod resources_ui_test {
         let text = get_resource_label_text_value(&mut app);
         assert_eq!(*text, "0");
     }
-
 
 
     #[test]
@@ -81,9 +82,7 @@ mod resources_ui_test {
         let mut app = App::new();
         app.add_plugins((Core2dPlugin, UIPlugin));
         app.add_state::<AppState>();
-        app.add_systems(
-            Update,
-            update_gold_resource_label.run_if(in_state(AppState::InGame)));
+
         app.update();
         app
     }
