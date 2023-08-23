@@ -13,18 +13,44 @@ impl Plugin for UIPlugin {
                 update_gold_resource_label.run_if(in_state(AppState::InGame)));
     }
 }
+
 pub fn setup_gold_resource_ui(mut commands: Commands) {
-    commands.spawn((
-        GoldResourceLabel,
-        TextBundle::from_section(
-            "0".to_string(),
-            TextStyle {
-                color:  Color::ALICE_BLUE,
-                font_size: 14.,
+    commands.spawn(NodeBundle {
+        style: Style {
+            display: Display::Grid,
+            width: Val::Percent(100.),
+            height: Val::Percent(100.),
+            grid_template_columns: vec![GridTrack::auto()],
+            grid_template_rows: vec![
+                GridTrack::auto(),
+                GridTrack::flex(1.),
+                GridTrack::px(100.),
+            ],
+            ..default()
+        },
+        ..default()
+    }).with_children(|parent| {
+        parent.spawn(NodeBundle {
+            style: Style {
+                display: Display::Grid,
+                grid_column: GridPlacement::span(1),
                 ..default()
             },
-        ))
-    );
+            ..default()
+        }).with_children(|parent| {
+            parent.spawn((
+                GoldResourceLabel,
+                TextBundle::from_section(
+                    "0".to_string(),
+                    TextStyle {
+                        color: Color::ALICE_BLUE,
+                        font_size: 14.,
+                        ..default()
+                    },
+                )
+            ));
+        });
+    });
 }
 
 pub fn update_gold_resource_label(query: Query<&GoldResource, Changed<GoldResource>>, mut text_query: Query<&mut Text, With<GoldResourceLabel>>) {

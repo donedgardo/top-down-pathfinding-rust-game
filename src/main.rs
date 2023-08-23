@@ -6,6 +6,7 @@ use crate::ui::UIPlugin;
 mod gold_resource;
 mod ui;
 mod game_state;
+mod camera;
 
 fn main() {
     let mut app = App::new();
