@@ -11,11 +11,19 @@ impl Supply {
     }
 
     pub fn add_amount(&mut self, x: u32) -> Result<(), NotEnoughSupplyError> {
-        if  self.0 + x > self.1 {
+        if self.0 + x > self.1 {
             return Err(NotEnoughSupplyError);
         }
         self.0 += x;
         Ok(())
+    }
+
+    pub fn remove_amount(&mut self, x: u32) {
+        if x > self.0 {
+            self.0 = 0;
+        } else {
+            self.0 -= x;
+        }
     }
 
     pub fn add_capacity(&mut self, x: u32) {
@@ -25,7 +33,6 @@ impl Supply {
     pub fn remove_capacity(&mut self, x: u32) {
         if x > self.1 {
             self.1 = 0;
-
         } else {
             self.1 -= x;
         }
@@ -84,6 +91,23 @@ mod supply_tests {
         let mut supply = Supply::default();
         let result = supply.add_amount(1);
         assert_eq!(result.unwrap_err(), NotEnoughSupplyError);
+    }
+
+    #[test]
+    fn it_can_remove_amount_from_supply() {
+        let mut supply = Supply::default();
+        supply.add_capacity(2);
+        supply.add_amount(2).unwrap();
+        supply.remove_amount(1);
+        assert_eq!(supply.amount(), 1);
+    }
+
+    #[test]
+    fn it_doesnt_go_negative_when_removing_amount() {
+        let mut supply = Supply::default();
+        supply.add_capacity(2);
+        supply.remove_amount(1);
+        assert_eq!(supply.amount(), 0);
     }
 }
 
