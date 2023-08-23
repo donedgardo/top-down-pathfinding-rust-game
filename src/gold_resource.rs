@@ -9,6 +9,7 @@ impl Plugin for ResourcesPlugin {
         app.add_systems(OnEnter(AppState::InGame), setup_resource);
     }
 }
+
 #[derive(Default, Component)]
 pub struct GoldResource(u32);
 

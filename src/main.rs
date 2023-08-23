@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use crate::gold_resource::ResourcesPlugin;
 use crate::ui::UIPlugin;
 
 mod gold_resource;
@@ -10,6 +11,7 @@ fn main() {
     app.add_plugins((
         DefaultPlugins,
         UIPlugin,
+        ResourcesPlugin,
     ));
     app.run();
 }
