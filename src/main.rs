@@ -4,7 +4,7 @@ struct GoldResource(u32);
 
 impl GoldResource {
     pub fn gain(&mut self, amount: u32) {
-        self.0 += 5;
+        self.0 += amount;
     }
     pub fn balance(&self) -> u32 {
         self.0
@@ -61,6 +61,8 @@ mod resources_test {
         let mut gold_resource = GoldResource(0);
         gold_resource.gain(5);
         assert_eq!(gold_resource.balance(), 5);
+        gold_resource.gain(6);
+        assert_eq!(gold_resource.balance(), 11);
     }
 
     fn setup() -> App {
