@@ -9,10 +9,11 @@ impl GoldResource {
         self.0 += amount;
     }
 
-    pub(crate) fn remove(&self, amount: u32) -> Result<(), NotEnoughResourceError> {
+    pub(crate) fn remove(&mut self, amount: u32) -> Result<(), NotEnoughResourceError> {
         if amount > self.0 {
             return Err(NotEnoughResourceError);
         }
+        self.0 -= amount;
         Ok(())
     }
     pub fn balance(&self) -> u32 {
@@ -86,6 +87,12 @@ mod resources_test {
         let mut gold_resource = GoldResource(0);
         let result = gold_resource.remove(5);
         assert_eq!(result.unwrap_err(), NotEnoughResourceError);
+    }
+    #[test]
+    fn it_removes_correctly_from_balance() {
+        let mut gold_resource = GoldResource(4);
+        let result = gold_resource.remove(3);
+        assert_eq!(gold_resource.balance(), 1);
     }
 
     fn setup() -> App {
