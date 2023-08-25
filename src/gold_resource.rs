@@ -40,6 +40,7 @@ fn setup_resource(mut commands: Commands) {
 #[derive(Debug, Clone, PartialEq)]
 pub struct NotEnoughResourceError;
 
+#[cfg(test)]
 mod resources_ui_test {
     use bevy::core_pipeline::core_2d::Core2dPlugin;
     use bevy::prelude::{App};

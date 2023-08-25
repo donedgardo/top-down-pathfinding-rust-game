@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use bevy_mod_picking::prelude::Pickable;
 use crate::game_state::AppState;
 use crate::gold_resource::GoldResource;
 
@@ -15,21 +16,24 @@ impl Plugin for UIPlugin {
 }
 
 pub fn setup_gold_resource_ui(mut commands: Commands) {
-    commands.spawn(NodeBundle {
-        style: Style {
-            display: Display::Grid,
-            width: Val::Percent(100.),
-            height: Val::Percent(100.),
-            grid_template_columns: vec![GridTrack::auto()],
-            grid_template_rows: vec![
-                GridTrack::auto(),
-                GridTrack::flex(1.),
-                GridTrack::px(100.),
-            ],
+    commands.spawn((
+        NodeBundle {
+            style: Style {
+                display: Display::Grid,
+                width: Val::Percent(100.),
+                height: Val::Percent(100.),
+                grid_template_columns: vec![GridTrack::auto()],
+                grid_template_rows: vec![
+                    GridTrack::auto(),
+                    GridTrack::flex(1.),
+                    GridTrack::px(100.),
+                ],
+                ..default()
+            },
             ..default()
         },
-        ..default()
-    }).with_children(|parent| {
+        Pickable::IGNORE
+    )).with_children(|parent| {
         parent.spawn(NodeBundle {
             style: Style {
                 display: Display::Grid,
@@ -53,7 +57,10 @@ pub fn setup_gold_resource_ui(mut commands: Commands) {
     });
 }
 
-pub fn update_gold_resource_label(query: Query<&GoldResource, Changed<GoldResource>>, mut text_query: Query<&mut Text, With<GoldResourceLabel>>) {
+pub fn update_gold_resource_label(
+    query: Query<&GoldResource, Changed<GoldResource>>,
+    mut text_query: Query<&mut Text, With<GoldResourceLabel>>,
+) {
     let mut text = text_query.single_mut();
     for gold_resource in query.iter() {
         text.sections[0].value = gold_resource.balance().to_string();

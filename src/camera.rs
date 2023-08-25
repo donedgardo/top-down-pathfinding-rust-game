@@ -1,5 +1,5 @@
 use bevy::app::{App, Plugin, Startup};
-use bevy::prelude::{Camera2dBundle, Commands, Component};
+use bevy::prelude::*;
 
 pub struct MyCameraPlugin;
 
@@ -10,7 +10,14 @@ impl Plugin for MyCameraPlugin {
 }
 
 fn spawn_main_camera(mut commands: Commands) {
-    commands.spawn((MainCamera, Camera2dBundle::default()));
+    commands.spawn((
+        MainCamera,
+        Camera3dBundle {
+            transform: Transform::from_xyz(0., 40., -25.)
+                .looking_at(Vec3::new(0., 0., 15.), Vec3::Y),
+            ..default()
+        },
+    ));
 }
 
 #[derive(Component)]
@@ -24,12 +31,10 @@ mod camera_test {
 
     #[test]
     fn it_spawns_main_camera() {
-        let mut app =  App::new();
+        let mut app = App::new();
         app.add_plugins((Core2dPlugin, MyCameraPlugin));
         app.update();
         let result = app.world.query::<(&MainCamera, &Camera)>().get_single(&app.world);
         assert!(result.is_ok())
-
     }
-
 }
