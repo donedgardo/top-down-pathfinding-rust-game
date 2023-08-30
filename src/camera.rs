@@ -14,7 +14,7 @@ fn spawn_main_camera(mut commands: Commands) {
         MainCamera,
         Camera3dBundle {
             transform: Transform::from_xyz(0., 40., -25.)
-                .looking_at(Vec3::new(0., 0., 15.), Vec3::Y),
+                .looking_at(Vec3::new(0., 0., 10.), Vec3::Y),
             ..default()
         },
     ));

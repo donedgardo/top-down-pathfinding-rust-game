@@ -1,6 +1,6 @@
 use bevy::prelude::*;
-use bevy_mod_picking::DefaultPickingPlugins;
 use bevy_inspector_egui::quick::WorldInspectorPlugin;
+use bevy_mod_picking::prelude::*;
 use bevy_xpbd_3d::prelude::PhysicsPlugins;
 use pathfinding::PathfindingPlugin;
 use crate::camera::MyCameraPlugin;
@@ -9,7 +9,7 @@ use crate::gold_resource::ResourcesPlugin;
 use crate::ui::UIPlugin;
 
 use world::setup_3d_scene;
-use crate::world::setup_scene;
+use crate::movement::MovementPlugin;
 
 mod gold_resource;
 mod ui;
@@ -18,6 +18,7 @@ mod camera;
 mod supply;
 mod pathfinding;
 mod world;
+mod movement;
 
 fn main() {
     let mut app = App::new();
@@ -26,13 +27,15 @@ fn main() {
         DefaultPlugins,
         PhysicsPlugins::default(),
         PathfindingPlugin::default(),
-        DefaultPickingPlugins,
+        DefaultPickingPlugins.build()
+            .disable::<DefaultHighlightingPlugin>(),
         WorldInspectorPlugin::new(),
         MyCameraPlugin,
         UIPlugin,
         ResourcesPlugin,
+        MovementPlugin,
     ));
-
     app.add_systems(Startup, setup_3d_scene);
     app.run();
 }
+

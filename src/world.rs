@@ -2,8 +2,14 @@ use bevy::prelude::*;
 use bevy::pbr::{DirectionalLight, DirectionalLightBundle, PbrBundle, StandardMaterial};
 use bevy::math::{EulerRot, Quat, Vec3};
 use bevy_mod_picking::prelude::*;
-use bevy_xpbd_3d::components::Collider;
+use bevy_xpbd_3d::components::{Collider, Position};
+use bevy_xpbd_3d::prelude::{CoefficientCombine, Friction, GravityScale, LockedAxes, Restitution, RigidBody};
 use oxidized_navigation::NavMeshAffector;
+use crate::movement::MovementPath;
+use crate::pathfinding::MoveEvent;
+
+#[derive(Component)]
+pub struct Selected;
 
 pub fn setup_3d_scene(
     mut commands: Commands,
@@ -32,22 +38,34 @@ pub fn setup_3d_scene(
             transform: Transform::IDENTITY,
             ..default()
         },
-        Collider::cuboid(50.0, 0.2, 50.0),
+        RigidBody::Static,
+        Collider::cuboid(75.0, 0.5, 75.0),
         PickableBundle::default(),
         NavMeshAffector,
+        On::<Pointer<Down>>::send_event::<MoveEvent>(),
     ));
 
     // Cube
     commands.spawn((
         PbrBundle {
-            mesh: meshes.add(Mesh::from(shape::Cube { size: 2.5 })),
+            mesh: meshes.add(Mesh::from(shape::Capsule {
+                radius: 0.5,
+                depth: 1.0,
+                ..default()
+            })),
             material: materials.add(Color::rgb(0.1, 0.1, 0.5).into()),
             transform: Transform::from_xyz(-5.0, 0.8, -5.0),
             ..default()
         },
-        Collider::cuboid(2.5, 2.5, 2.5),
+        Collider::capsule(1., 0.5),
+        RigidBody::Dynamic,
+        Restitution::new(0.0).with_combine_rule(CoefficientCombine::Min),
+        Friction::new(0.),
+        GravityScale(2.0),
+        LockedAxes::new().lock_rotation_x().lock_rotation_z(),
         PickableBundle::default(),
-        NavMeshAffector,
+        Selected,
+        MovementPath::default()
     ));
 
     // Thin wall
@@ -59,44 +77,8 @@ pub fn setup_3d_scene(
             ..default()
         },
         // At the time of writing, xpbd (v0.2) colliders don't support scaling, so you have to create the collider with the post-scaled size.
+        RigidBody::Static,
         Collider::cuboid(5.0, 1.5, 0.1),
         NavMeshAffector,
     ));
-}
-
-pub fn setup_scene(
-    mut commands: Commands,
-    mut meshes: ResMut<Assets<Mesh>>,
-    mut materials: ResMut<Assets<StandardMaterial>>,
-) {
-    commands.spawn((
-        PbrBundle {
-            mesh: meshes.add(Mesh::from(shape::Plane::from_size(5.0))),
-            material: materials.add(Color::rgb(0.3, 0.5, 0.3).into()),
-            ..default()
-        },
-        PickableBundle::default(), // Adds selection, highlighting, and the `Pickable` override.
-    ));
-    commands.spawn((
-        PbrBundle {
-            mesh: meshes.add(Mesh::from(shape::Cube { size: 1.0 })),
-            material: materials.add(Color::rgb(0.8, 0.7, 0.6).into()),
-            transform: Transform::from_xyz(0.0, 0.5, 0.0),
-            ..default()
-        },
-        PickableBundle::default(), // Adds selection, highlighting, and the `Pickable` override.
-    ));
-    commands.spawn(PointLightBundle {
-        point_light: PointLight {
-            intensity: 1500.0,
-            shadows_enabled: true,
-            ..default()
-        },
-        transform: Transform::from_xyz(4.0, 8.0, -4.0),
-        ..default()
-    });
-    commands.spawn((Camera3dBundle {
-        transform: Transform::from_xyz(3.0, 3.0, 3.0).looking_at(Vec3::ZERO, Vec3::Y),
-        ..default()
-    },));
 }
