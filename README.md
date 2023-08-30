@@ -31,8 +31,9 @@ cd top-down-pathfinding-rust-game
 ```bash
 cargo build
 ```
-4. Run the game:   ```bash
-5.    cargo run
+4. Run the game:
+```bash
+cargo run
 ```
 
 ## Usage
